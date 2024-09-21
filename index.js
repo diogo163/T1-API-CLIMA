@@ -28,11 +28,23 @@ async function getCoordinates(city) {
 }
 
 
+async function getWeather(lat, lon) {
+  try {
+    const response = await axios.get(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`);
+    const { feels_like } = response.data.main;
+    const { description } = response.data.weather[0];
+    console.log(`Sensação térmica: ${feels_like}°C, Descrição: ${description}`);
+  } catch (error) {
+    console.error('Erro ao obter previsão:', error);
+  }
+}
 
 
 rl.question('Digite o nome de uma cidade: ', (cityName) => {
   getCoordinates(cityName).then(coords => {
-    
+    if (coords) {
+      getWeather(coords.lat, coords.lon);
+    }
     rl.close();
   });
 });
